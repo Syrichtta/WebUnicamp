@@ -2,14 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        // If the user is logged in, navigate to home
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            // User is logged in, so skip the login screen
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacementNamed(context, '/home');
+            });
+            return Container(); // You can return an empty container while navigating
+          } else {
+            // User is not logged in, show login screen
+            return _LoginScreen();
+          }
+        } else {
+          // Show a loading indicator while checking auth state
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+}
+
+class _LoginScreen extends StatefulWidget {
+  const _LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<_LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -36,33 +65,33 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    // Create a new provider
-    GoogleAuthProvider googleProvider = GoogleAuthProvider();
-
-    googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    googleProvider.setCustomParameters({
-      'login_hint': 'user@example.com',
-    });
-
-    // Sign in with Google
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithPopup(googleProvider);
-
-    // Navigate to home on successful login
-    Navigator.pushNamed(context, '/home');
-  } on FirebaseAuthException catch (e) {
-    _showError(e.message ?? "Google Sign-In error.");
-  } finally {
     setState(() {
-      _isLoading = false;
+      _isLoading = true;
     });
+
+    try {
+      // Create a new provider
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+      googleProvider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+      googleProvider.setCustomParameters({
+        'login_hint': 'user@example.com',
+      });
+
+      // Sign in with Google
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithPopup(googleProvider);
+
+      // Navigate to home on successful login
+      Navigator.pushNamed(context, '/home');
+    } on FirebaseAuthException catch (e) {
+      _showError(e.message ?? "Google Sign-In error.");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
-}
 
   void _showError(String error) {
     showDialog(
@@ -106,21 +135,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset('assets/addu_logo.png', height: 100,),
-                      SizedBox(height: 15,),
+                      Image.asset('assets/addu_logo.png', height: 100),
+                      SizedBox(height: 15),
                       Text(
                         'Ateneo WebUniCamp',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.poppins(
                           textStyle: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.w700
-                          )
-                        )
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Divider(),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -128,33 +157,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'Log In via Gmail',
                             textAlign: TextAlign.center,
-                             style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
-                                  color: Color.fromARGB(255, 231, 231, 231),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500
-                                )
-                              )
+                            style: GoogleFonts.poppins(
+                              textStyle: TextStyle(
+                                color: Color.fromARGB(255, 231, 231, 231),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFF2C2C9A),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
                           ),
                         ),
                       ),
-                      SizedBox(height: 15,),
+                      SizedBox(height: 15),
                       Text(
-                          "or",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF707070),
-                          ),
+                        "or",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF707070),
                         ),
-                      SizedBox(height: 15,),
+                      ),
+                      SizedBox(height: 15),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -164,20 +194,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'Continue as Guest',
                             textAlign: TextAlign.center,
-                             style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500
-                                )
-                              )
+                            style: GoogleFonts.poppins(
+                              textStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFFf5f6fa),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5), // Adjust the radius as needed
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), // Optional: Adjust padding
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
                           ),
                         ),
                       ),
