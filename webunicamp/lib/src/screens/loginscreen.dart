@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:webunicamp/src/widgets/textinputwidget.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -84,123 +83,111 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        color: const Color(0xFFffffff),
-        child: Row(
-          children: [
-            Expanded(
-              child: FittedBox(
-                fit: BoxFit.cover,
-                alignment: Alignment.topCenter,
-                child: Image.asset('assets/addu.png'),
-              ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/roxas.jpg',
+              fit: BoxFit.cover,
             ),
-            SizedBox(
-              width: 600,
-              child: Container(
-                color: Colors.blue,
-                child: Padding(
-                  padding: const EdgeInsets.all(64.0),
+          ),
+          Center(
+            child: Card(
+              elevation: 10,
+              shadowColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Container(
+                  width: 250,
+                  height: 350,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
-                        "Welcome Back",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF707070),
-                        ),
+                      Image.asset('assets/addu_logo.png', height: 100,),
+                      SizedBox(height: 15,),
+                      Text(
+                        'Ateneo WebUniCamp',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          textStyle: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700
+                          )
+                        )
                       ),
-                      const SizedBox(height: 40),
-                      TextInputWidget(
-                        labelText: 'Email',
-                        controller: _emailController,
-                      ),
-                      TextInputWidget(
-                        labelText: 'Password',
-                        controller: _passwordController,
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 15),
-                      ElevatedButton(
-                        onPressed: _isLoading ? null : _signIn,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6218ab),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? CircularProgressIndicator(
-                                color: Colors.white,
+                      SizedBox(height: 15,),
+                      Divider(),
+                      SizedBox(height: 15,),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _signInWithGoogle,
+                          child: Text(
+                            'Log In via Gmail',
+                            textAlign: TextAlign.center,
+                             style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                  color: Color.fromARGB(255, 231, 231, 231),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500
+                                )
                               )
-                            : const Text(
-                                "Sign In",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFFf8f6fb),
-                                ),
-                              ),
-                      ),
-
-                      const SizedBox(height: 15),
-                      const Text(
-                        "or",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF707070),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF2C2C9A),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                        ElevatedButton.icon(
-                        onPressed: _signInWithGoogle,
-                        icon: Icon(Icons.account_circle),
-                        label: Text("Sign in with Google"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          elevation: 0,
+                      SizedBox(height: 15,),
+                      Text(
+                          "or",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF707070),
+                          ),
+                        ),
+                      SizedBox(height: 15,),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Your onPressed logic here
+                          },
+                          child: Text(
+                            'Continue as Guest',
+                            textAlign: TextAlign.center,
+                             style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500
+                                )
+                              )
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFf5f6fa),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5), // Adjust the radius as needed
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16), // Optional: Adjust padding
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 60),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Don't Have Any Account?",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF707070),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/signup');
-                            },
-                            child: const Text(
-                              " Create New!",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF5e5c95),
-                              ),
-                            ),
-                          ),
-                        ],
-                        
-                      )
                     ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

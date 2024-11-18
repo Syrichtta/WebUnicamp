@@ -13,6 +13,7 @@ dependencies:
   firebase_auth: ^5.3.3
   google_sign_in: ^6.2.2
   flutter_dotenv: ^5.2.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -22,5 +23,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-   - assets/addu.png
+   - assets/roxas.jpg
+   - assets/addu_logo.png
    - .env
