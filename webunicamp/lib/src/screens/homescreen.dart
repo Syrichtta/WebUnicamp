@@ -1,27 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:webunicamp/src/widgets/custom_appbar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // Method to log out the user
   Future<void> _logOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/'); // Navigate back to login screen
+    Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () => _logOut(context), // Call the logout method
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(),
       body: Row(
         children: [
           Column(),
@@ -31,7 +24,13 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _logOut(context), // Log out on button press
-                child: Text('Log Out'),
+                child: Text(
+                  'Log Out',
+                  style: GoogleFonts.poppins(
+                    textStyle:
+                        TextStyle(color: Color(0xFFF3F3F3), fontSize: 20),
+                  ),
+                ),
               ),
             ],
           ),

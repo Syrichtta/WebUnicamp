@@ -25,4 +25,9 @@ flutter:
   assets:
    - assets/roxas.jpg
    - assets/addu_logo.png
+   - assets/aerial.jpg
    - .env
+  fonts:
+    - family: Trajan
+      fonts:
+        - asset: assets/fonts/Trajan.ttf
