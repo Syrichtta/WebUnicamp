@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:webunicamp/src/screens/homescreen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -15,7 +16,11 @@ class LoginScreen extends StatelessWidget {
           if (snapshot.hasData) {
             // User is logged in, so skip the login screen
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacementNamed(context, '/home');
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                (route) => false, // This removes all previous routes
+              );
             });
             return Container(); // You can return an empty container while navigating
           } else {
