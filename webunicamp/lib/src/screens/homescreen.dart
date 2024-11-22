@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:webunicamp/src/screens/buildingscreen.dart';
 import 'package:webunicamp/src/widgets/building_card.dart';
 import 'package:webunicamp/src/widgets/custom_appbar.dart';
+// import 'package:webunicamp/src/widgets/building_details_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -38,15 +40,15 @@ class HomeScreen extends StatelessWidget {
               builder: (context, snapshot) {
                 // Handle loading state
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 // Handle error state
                 if (snapshot.hasError) {
-                  return Text('Error loading buildings');
+                  return const Text('Error loading buildings');
                 }
                 // No buildings found
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Text('No buildings found');
+                  return const Text('No buildings found');
                 }
 
                 return SingleChildScrollView(
@@ -80,16 +82,32 @@ class HomeScreen extends StatelessWidget {
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/buildings',
-                            arguments: {
-                              'Name':
-                                  buildingData['Name'] ?? 'Unnamed Building',
-                              'Description': buildingData['Description'] ??
-                                  'No Description Available',
-                              'PhotoURL':
-                                  photoURLs, // Now passing the list of URLs
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (BuildContext context) {
+                              final screenHeight =
+                                  MediaQuery.of(context).size.height;
+
+                              return Container(
+                                height: screenHeight *
+                                    0.85, // Set to 3/4 of the screen height
+                                padding: const EdgeInsets.all(16),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(16),
+                                  ),
+                                ),
+                                child: BuildingDetailsWidget(
+                                  name: buildingData['Name'] ??
+                                      'Unnamed Building',
+                                  description: buildingData['Description'] ??
+                                      'No Description Available',
+                                  photoURLs: photoURLs,
+                                ),
+                              );
                             },
                           );
                         },
