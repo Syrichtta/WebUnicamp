@@ -4,12 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 class LocationDetailsWidget extends StatelessWidget {
   final String name;
+  final String email;
+  final String building;
   final String description;
   final List<String> photoURLs;
 
   const LocationDetailsWidget({
     Key? key,
     required this.name,
+    required this.email,
+    required this.building,
     required this.description,
     required this.photoURLs,
   }) : super(key: key);
@@ -59,8 +63,26 @@ class LocationDetailsWidget extends StatelessWidget {
             name,
             style: GoogleFonts.poppins(
               textStyle: const TextStyle(
-                fontSize: 20,
+                fontSize: 28,
                 fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Text(
+            building,
+            style: GoogleFonts.poppins(
+              textStyle: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Text(
+            email,
+            style: GoogleFonts.poppins(
+              textStyle: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),

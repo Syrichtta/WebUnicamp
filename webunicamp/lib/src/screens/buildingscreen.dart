@@ -164,6 +164,9 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                               ),
                               child: LocationDetailsWidget(
                                 name: locationName,
+                                building:
+                                    locationData['Building'] ?? 'no Building',
+                                email: locationData['Email'] ?? 'no email',
                                 description: locationData['Description'] ??
                                     'No Description Available',
                                 photoURLs:
