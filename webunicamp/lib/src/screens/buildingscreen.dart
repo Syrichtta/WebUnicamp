@@ -2,28 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:image_network/image_network.dart';
+import 'package:webunicamp/src/screens/locationscreen.dart';
 import 'package:webunicamp/src/widgets/custom_appbar.dart';
 import 'package:webunicamp/src/widgets/location_card.dart';
 
-class BuildingScreen extends StatelessWidget {
-  const BuildingScreen({Key? key}) : super(key: key);
+class BuildingScreen extends StatefulWidget {
+  final String name;
+  final String description;
+  final List<dynamic> photoURLs;
+
+  const BuildingScreen({
+    Key? key,
+    required this.name,
+    required this.description,
+    required this.photoURLs,
+  }) : super(key: key);
+
+  @override
+  _BuildingScreenState createState() => _BuildingScreenState();
+}
+
+class _BuildingScreenState extends State<BuildingScreen> {
+  late String name;
+  late String description;
+  late List<dynamic> photoURLs;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize local state variables with widget values
+    name = widget.name;
+    description = widget.description;
+    photoURLs = widget.photoURLs;
+  }
+
+  Stream<QuerySnapshot> _fetchLocations() {
+    return FirebaseFirestore.instance
+        .collection('Locations')
+        .where('Building', isEqualTo: name)
+        .snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    final name = args?['Name'] ?? 'Unnamed Building';
-    final description = args?['Description'] ?? 'No description available';
-    final photoURLs = args?['PhotoURL'] as List<dynamic>? ?? [];
-    print(photoURLs);
-
-    Stream<QuerySnapshot> _fetchLocations() {
-      return FirebaseFirestore.instance
-          .collection('Locations')
-          .where('Building', isEqualTo: name)
-          .snapshots();
-    }
-
     return Scaffold(
       appBar: CustomAppBar(),
       body: Column(
@@ -50,7 +71,7 @@ class BuildingScreen extends StatelessWidget {
                             autoPlay: true,
                             autoPlayInterval: const Duration(seconds: 5),
                           ),
-                          items: photoURLs.map((url) {
+                          items: photoURLs.map<Widget>((url) {
                             return Builder(
                               builder: (BuildContext context) {
                                 return Container(
@@ -60,9 +81,6 @@ class BuildingScreen extends StatelessWidget {
                                     width: 1024,
                                     image: url,
                                     fitWeb: BoxFitWeb.cover,
-                                    // onLoading: const CircularProgressIndicator(
-                                    //   color: Colors.indigoAccent,
-                                    // ),
                                     onError: const Icon(
                                       Icons.error,
                                       color: Colors.red,
@@ -94,7 +112,7 @@ class BuildingScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 24),
-                        Container(height: 1, color: Color(0xFF7a7a7a)),
+                        Container(height: 1, color: const Color(0xFF7a7a7a)),
                         const SizedBox(height: 24),
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
@@ -160,11 +178,35 @@ class BuildingScreen extends StatelessWidget {
                                               locationPhotoURLs.isNotEmpty)
                                           ? locationPhotoURLs[0]
                                           : 'https://via.placeholder.com/150';
+return GestureDetector(
+  onTap: () {
+    final locationData = locations[index].data() as Map<String, dynamic>;
 
-                                      return LocationCard(
-                                        imgUrl: photoURL,
-                                        title: locationName,
-                                      );
+    // Extract the necessary data for the location card
+    final locationName = locationData['Name'] ?? 'Unnamed Location';
+    final locationDescription = locationData['Description'] ?? 'No Description Available';
+    final locationEmail = locationData['Email'] ?? 'No Email Available';
+    final locationPhotoURLs = locationData['PhotoURL'] as List<dynamic>?;
+
+    // Pass the data to the new LocationScreen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationScreen(
+          name: locationName,
+          description: locationDescription,
+          email: locationEmail,
+          photoURLs: locationPhotoURLs ?? ['https://via.placeholder.com/150'],
+        ),
+      ),
+    );
+  },
+  child: LocationCard(
+    imgUrl: photoURL,
+    title: locationName,
+  ),
+);
+
                                     },
                                   );
                                 },

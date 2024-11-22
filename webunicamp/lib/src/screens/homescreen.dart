@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:webunicamp/src/screens/buildingscreen.dart';
 import 'package:webunicamp/src/widgets/building_card.dart';
 import 'package:webunicamp/src/widgets/custom_appbar.dart';
 
@@ -80,24 +81,25 @@ class HomeScreen extends StatelessWidget {
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
+                          Navigator.push(
                             context,
-                            '/buildings',
-                            arguments: {
-                              'Name':
-                                  buildingData['Name'] ?? 'Unnamed Building',
-                              'Description': buildingData['Description'] ??
-                                  'No Description Available',
-                              'PhotoURL':
-                                  photoURLs, // Now passing the list of URLs
-                            },
+                            MaterialPageRoute(
+                              builder: (context) => BuildingScreen(
+                                name: buildingData['Name'] ?? 'Unnamed Building',
+                                description: buildingData['Description'] ?? 'No Description Available',
+                                photoURLs: (buildingData['PhotoURL'] as List<dynamic>?) ?? [],
+                              ),
+                            ),
                           );
-                        },
+},
                         child: BuildingCard(
-                          imgUrl: photoURLs[0], // Use first image for card
+                          imgUrl: (buildingData['PhotoURL'] is List)
+                              ? buildingData['PhotoURL'][0] 
+                              : 'https://via.placeholder.com/150',
                           title: buildingData['Name'] ?? 'Unnamed Building',
                         ),
                       );
+
                     }).toList(),
                   ),
                 );
