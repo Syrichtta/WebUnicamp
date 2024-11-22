@@ -40,47 +40,63 @@ class HomeScreen extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
                 }
-
                 // Handle error state
                 if (snapshot.hasError) {
                   return Text('Error loading buildings');
                 }
-
                 // No buildings found
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Text('No buildings found');
                 }
 
-                // Use SingleChildScrollView to allow scrolling without ListView stretching
                 return SingleChildScrollView(
                   child: Wrap(
                     alignment: WrapAlignment.center,
-                    spacing: 16, // horizontal spacing between cards
-                    runSpacing: 16, // vertical spacing between rows
+                    spacing: 16,
+                    runSpacing: 16,
                     children:
                         snapshot.data!.docs.map((DocumentSnapshot document) {
                       var buildingData =
                           document.data() as Map<String, dynamic>;
+
+                      // Process PhotoURL data
+                      dynamic photoURLData = buildingData['PhotoURL'];
+                      List<String> photoURLs = [];
+
+                      if (photoURLData is List) {
+                        // If it's already a list, use it
+                        photoURLs = List<String>.from(photoURLData);
+                      } else if (photoURLData != null) {
+                        // If it's a single URL, create a list with one item
+                        photoURLs = [photoURLData.toString()];
+                      }
+
+                      // If no photos available, add default photo
+                      if (photoURLs.isEmpty) {
+                        photoURLs = [
+                          'https://firebasestorage.googleapis.com/v0/b/unicamp-ad6f4.firebasestorage.app/o/Bellarmine%20Hall%201.jpg?alt=media&token=1a5a3c18-e171-4bd7-bb37-6d96030f600d'
+                        ];
+                      }
+
                       return GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
-                            context, 
+                            context,
                             '/buildings',
                             arguments: {
-                              'Name': buildingData['Name'] ?? 'Unnamed Building',
-                              'Description': buildingData['Description'] ?? 'No Description Available'
+                              'Name':
+                                  buildingData['Name'] ?? 'Unnamed Building',
+                              'Description': buildingData['Description'] ??
+                                  'No Description Available',
+                              'PhotoURL':
+                                  photoURLs, // Now passing the list of URLs
                             },
                           );
                         },
                         child: BuildingCard(
-                        imgUrl: (buildingData['PhotoURL'] is List)
-                            ? buildingData['PhotoURL']
-                                [0] // Take the first image if it's a list
-                            : buildingData[
-                                    'PhotoURL'] ?? // Use original URL if not a list
-                                'https://firebasestorage.googleapis.com/v0/b/unicamp-ad6f4.firebasestorage.app/o/Bellarmine%20Hall%201.jpg?alt=media&token=1a5a3c18-e171-4bd7-bb37-6d96030f600d',
-                        title: buildingData['Name'] ?? 'Unnamed Building',
-                        )
+                          imgUrl: photoURLs[0], // Use first image for card
+                          title: buildingData['Name'] ?? 'Unnamed Building',
+                        ),
                       );
                     }).toList(),
                   ),

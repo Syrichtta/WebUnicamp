@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:image_network/image_network.dart';
 import 'package:webunicamp/src/widgets/custom_appbar.dart';
 import 'package:webunicamp/src/widgets/location_card.dart';
 
@@ -8,9 +10,12 @@ class BuildingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final name = args?['Name'] ?? 'Unnamed Building';
     final description = args?['Description'] ?? 'No description available';
+    final photoURLs = args?['PhotoURL'] as List<dynamic>? ?? [];
+    print(photoURLs);
 
     Stream<QuerySnapshot> _fetchLocations() {
       return FirebaseFirestore.instance
@@ -28,14 +33,46 @@ class BuildingScreen extends StatelessWidget {
               children: [
                 Expanded(
                   flex: 1,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/aerial.jpg'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+                  child: photoURLs.isEmpty
+                      ? Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.grey,
+                          ),
+                          child: const Center(
+                            child: Text('No images available'),
+                          ),
+                        )
+                      : CarouselSlider(
+                          options: CarouselOptions(
+                            height: double.infinity,
+                            viewportFraction: 1.0,
+                            enlargeCenterPage: false,
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 5),
+                          ),
+                          items: photoURLs.map((url) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Container(
+                                  width: double.infinity,
+                                  child: ImageNetwork(
+                                    height: 720,
+                                    width: 1024,
+                                    image: url,
+                                    fitWeb: BoxFitWeb.cover,
+                                    onLoading: const CircularProgressIndicator(
+                                      color: Colors.indigoAccent,
+                                    ),
+                                    onError: const Icon(
+                                      Icons.error,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }).toList(),
+                        ),
                 ),
                 Expanded(
                   flex: 1,
@@ -59,22 +96,26 @@ class BuildingScreen extends StatelessWidget {
                         const SizedBox(height: 24),
                         Container(height: 1, color: Color(0xFF7a7a7a)),
                         const SizedBox(height: 24),
-
                         Expanded(
                           child: StreamBuilder<QuerySnapshot>(
                             stream: _fetchLocations(),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: CircularProgressIndicator());
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
                               if (snapshot.hasError) {
                                 return Center(
-                                  child: Text("Error loading locations: ${snapshot.error}"),
+                                  child: Text(
+                                      "Error loading locations: ${snapshot.error}"),
                                 );
                               }
-                              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                              if (!snapshot.hasData ||
+                                  snapshot.data!.docs.isEmpty) {
                                 return const Center(
-                                  child: Text("No locations found for this building"),
+                                  child: Text(
+                                      "No locations found for this building"),
                                 );
                               }
 
@@ -82,14 +123,16 @@ class BuildingScreen extends StatelessWidget {
 
                               return LayoutBuilder(
                                 builder: (context, constraints) {
-                                  int crossAxisCount = constraints.maxWidth > 800
-                                      ? 3 // Large screens
-                                      : constraints.maxWidth > 400
-                                          ? 2 // Medium screens
-                                          : 1; // Small screens
+                                  int crossAxisCount =
+                                      constraints.maxWidth > 800
+                                          ? 3
+                                          : constraints.maxWidth > 400
+                                              ? 2
+                                              : 1;
 
                                   return GridView.builder(
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: crossAxisCount,
                                       crossAxisSpacing: 12.0,
                                       mainAxisSpacing: 12.0,
@@ -97,16 +140,25 @@ class BuildingScreen extends StatelessWidget {
                                     ),
                                     itemCount: locations.length,
                                     itemBuilder: (context, index) {
-                                      final locationData = locations[index].data() as Map<String, dynamic>?;
+                                      final locationData = locations[index]
+                                          .data() as Map<String, dynamic>?;
 
                                       if (locationData == null) {
-                                        return const Center(child: Text("Invalid location data"));
+                                        return const Center(
+                                            child:
+                                                Text("Invalid location data"));
                                       }
 
-                                      final locationName = locationData['Name'] ?? 'Unnamed Location';
-                                      final photoURLs = locationData['PhotoURL'] as List<dynamic>?;
-                                      final photoURL = (photoURLs != null && photoURLs.isNotEmpty)
-                                          ? photoURLs[0]
+                                      final locationName =
+                                          locationData['Name'] ??
+                                              'Unnamed Location';
+                                      final locationPhotoURLs =
+                                          locationData['PhotoURL']
+                                              as List<dynamic>?;
+                                      final photoURL = (locationPhotoURLs !=
+                                                  null &&
+                                              locationPhotoURLs.isNotEmpty)
+                                          ? locationPhotoURLs[0]
                                           : 'https://via.placeholder.com/150';
 
                                       return LocationCard(
