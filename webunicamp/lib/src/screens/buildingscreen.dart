@@ -27,7 +27,6 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
   @override
   void initState() {
     super.initState();
-    // Fetch locations when the widget is initialized
     _locationsFuture = _fetchLocations();
   }
 
@@ -59,13 +58,12 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Carousel for images
+            // Image Carousel
             if (widget.photoURLs.isNotEmpty)
               AspectRatio(
                 aspectRatio: 16 / 9,
                 child: CarouselSlider(
                   options: CarouselOptions(
-                    height: double.infinity,
                     viewportFraction: 1.0,
                     enlargeCenterPage: false,
                     autoPlay: true,
@@ -77,6 +75,9 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                       child: Image.network(
                         url,
                         fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Center(
+                          child: Icon(Icons.broken_image),
+                        ),
                       ),
                     );
                   }).toList(),
@@ -85,43 +86,47 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
             else
               Container(
                 height: 200,
-                color: Colors.grey,
+                color: Colors.grey[300],
                 child: const Center(
                   child: Text('No images available'),
                 ),
               ),
+
             const SizedBox(height: 16),
 
-            // Building name and description
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  textAlign: TextAlign.center,
-                  widget.name,
-                  style: GoogleFonts.poppins(
-                    textStyle: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                    ),
+            // Building Name
+            Center(
+              child: Text(
+                widget.name,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              ],
+              ),
             ),
+
+            const SizedBox(height: 8),
+
+            // Description
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 widget.description,
                 style: GoogleFonts.poppins(
                   textStyle: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
             ),
 
-            // Locations List using Wrap widget
+            const SizedBox(height: 16),
+
+            // Locations List
             FutureBuilder<List<DocumentSnapshot>>(
               future: _locationsFuture,
               builder: (context, snapshot) {
@@ -142,8 +147,8 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                 final locations = snapshot.data!;
 
                 return Wrap(
-                  spacing: 12.0, // Horizontal space between cards
-                  runSpacing: 12.0, // Vertical space between cards
+                  spacing: 12.0, // Horizontal spacing
+                  runSpacing: 12.0, // Vertical spacing
                   children: locations.map((document) {
                     final locationData =
                         document.data() as Map<String, dynamic>;
@@ -163,13 +168,8 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (BuildContext context) {
-                            final screenHeight =
-                                MediaQuery.of(context).size.height;
-
+                          builder: (_) {
                             return Container(
-                              height: screenHeight *
-                                  0.75, // Adjust height as needed
                               padding: const EdgeInsets.all(16),
                               decoration: const BoxDecoration(
                                 color: Colors.white,
@@ -179,9 +179,8 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                               ),
                               child: LocationDetailsWidget(
                                 name: locationName,
-                                building:
-                                    locationData['Building'] ?? 'no Building',
-                                email: locationData['Email'] ?? 'no email',
+                                building: locationData['Building'] ?? 'Unknown',
+                                email: locationData['Email'] ?? 'No email',
                                 description: locationData['Description'] ??
                                     'No Description Available',
                                 photoURLs:
