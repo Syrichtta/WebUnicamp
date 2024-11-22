@@ -31,29 +31,26 @@ class BuildingCard extends StatelessWidget {
                   topRight: Radius.circular(30),
                 ),
                 child: SizedBox(
-                    width: 444,
-                    height: 211,
-                    child:
-                        // Image.network(
-                        //   imgUrl,
-                        //   fit: BoxFit.cover,
-                        //   headers: const {
-                        //     'Access-Control-Allow-Origin': '*',
-                        //   },
-                        // ),
-                        ImageNetwork(
-                      image: imgUrl,
-                      height: 211,
-                      width: 444,
-                      fitWeb: BoxFitWeb.cover,
-                      onLoading: const CircularProgressIndicator(
-                        color: Colors.indigoAccent,
-                      ),
-                      onError: const Icon(
-                        Icons.error,
-                        color: Colors.red,
-                      ),
-                    )),
+                  width: 444,
+                  height: 211,
+                  child: Image.network(
+                    imgUrl,
+                    fit: BoxFit.cover,
+                  ),
+                  //     ImageNetwork(
+                  //   image: imgUrl,
+                  //   height: 211,
+                  //   width: 444,
+                  //   fitWeb: BoxFitWeb.cover,
+                  //   onLoading: const CircularProgressIndicator(
+                  //     color: Colors.indigoAccent,
+                  //   ),
+                  //   onError: const Icon(
+                  //     Icons.error,
+                  //     color: Colors.red,
+                  //   ),
+                  // )
+                ),
               ),
               Expanded(
                   child: Center(

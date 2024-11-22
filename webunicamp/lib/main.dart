@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:webunicamp/src/screens/buildingscreen.dart';
+import 'package:webunicamp/src/screens/facilitiesscreen.dart';
 import 'package:webunicamp/src/screens/loginscreen.dart';
 import 'package:webunicamp/src/screens/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,6 +46,7 @@ class MainApp extends StatelessWidget {
         '/': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
         '/buildings': (context) => BuildingScreen(),
+        '/facilities': (context) => FacilitiesScreen(),
       },
     );
   }
