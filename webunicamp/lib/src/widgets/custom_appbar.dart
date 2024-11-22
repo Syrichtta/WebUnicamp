@@ -16,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF3F3F3),
@@ -47,12 +48,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   const SizedBox(
                     width: 16,
                   ),
-                  const Text(
-                    'Ateneo De Davao University WebUniCamp',
-                    style: TextStyle(
-                      fontFamily: 'Trajan',
-                      fontSize: 28,
-                      color: Color(0xFF2E3192),
+                  Visibility(
+                    visible: screenWidth > 1030,
+                    child: const Text(
+                      'Ateneo De Davao University WebUniCamp',
+                      style: TextStyle(
+                        fontFamily: 'Trajan',
+                        fontSize: 28,
+                        color: Color(0xFF2E3192),
+                      ),
                     ),
                   ),
                 ],
