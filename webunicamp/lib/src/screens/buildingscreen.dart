@@ -60,9 +60,9 @@ class BuildingScreen extends StatelessWidget {
                                     width: 1024,
                                     image: url,
                                     fitWeb: BoxFitWeb.cover,
-                                    onLoading: const CircularProgressIndicator(
-                                      color: Colors.indigoAccent,
-                                    ),
+                                    // onLoading: const CircularProgressIndicator(
+                                    //   color: Colors.indigoAccent,
+                                    // ),
                                     onError: const Icon(
                                       Icons.error,
                                       color: Colors.red,
