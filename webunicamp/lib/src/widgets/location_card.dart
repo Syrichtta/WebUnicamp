@@ -56,9 +56,10 @@ class LocationCard extends StatelessWidget {
                   child: Center(
                 child: Text(
                   title,
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     textStyle: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

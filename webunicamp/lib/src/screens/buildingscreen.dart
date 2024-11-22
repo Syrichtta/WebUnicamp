@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:webunicamp/src/widgets/location_card.dart';
 import 'package:webunicamp/src/widgets/location_modal.dart';
 
@@ -92,19 +93,33 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
             const SizedBox(height: 16),
 
             // Building name and description
-            Text(
-              widget.name,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  textAlign: TextAlign.center,
+                  widget.name,
+                  style: GoogleFonts.poppins(
+                    textStyle: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              widget.description,
-              style: Theme.of(context).textTheme.bodyMedium,
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                widget.description,
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
 
             // Locations List using Wrap widget
             FutureBuilder<List<DocumentSnapshot>>(

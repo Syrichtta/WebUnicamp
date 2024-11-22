@@ -59,39 +59,54 @@ class LocationDetailsWidget extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Name and description
-          Text(
-            name,
-            style: GoogleFonts.poppins(
-              textStyle: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                name,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          Text(
-            building,
-            style: GoogleFonts.poppins(
-              textStyle: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
+          // Text(
+          //   building,
+          //   style: GoogleFonts.poppins(
+          //     textStyle: const TextStyle(
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w400,
+          //     ),
+          //   ),
+          // ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                email,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-          Text(
-            email,
-            style: GoogleFonts.poppins(
-              textStyle: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          Text(
-            description,
-            style: GoogleFonts.poppins(
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              description,
+              style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
           ),
