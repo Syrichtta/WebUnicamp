@@ -176,44 +176,44 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
   }
   }
 
-  // Widget to display selected photos
   Widget _buildPhotoPreview() {
-    return Container(
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: _photoPreviewUrls.length,
-        itemBuilder: (context, index) {
-          return Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.network(
-                  _photoPreviewUrls[index],
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
+  return Container(
+    child: Wrap(
+      spacing: 8.0,  // Horizontal space between items
+      runSpacing: 8.0,  // Vertical space between rows
+      children: List.generate(_photoPreviewUrls.length, (index) {
+        return Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.network(
+                _photoPreviewUrls[index],
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
               ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.red),
-                  onPressed: () {
-                    setState(() {
-                      _selectedPhotos.removeAt(index);
-                      _photoPreviewUrls.removeAt(index);
-                    });
-                  },
-                ),
+            ),
+            Positioned(
+              right: 0,
+              top: 0,
+              child: IconButton(
+                icon: Icon(Icons.close, color: Colors.red),
+                onPressed: () {
+                  setState(() {
+                    _selectedPhotos.removeAt(index);
+                    _photoPreviewUrls.removeAt(index);
+                  });
+                },
               ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+            ),
+          ],
+        );
+      }),
+    ),
+  );
+}
+
+
   
   @override
   Widget build(BuildContext context) {
@@ -382,7 +382,36 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                         ),
                       ),
 
-                
+                    SizedBox(height: 16,),
+
+                    Row(
+                      children: [
+                        Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                children: [
+                                  Checkbox(
+                                    value: _isVisible,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _isVisible = value ?? true;
+                                      });
+                                    },
+                                    activeColor: Colors.black,
+                                  ),
+                                  Text(
+                                    'Visible to Others',
+                                    style: GoogleFonts.poppins(
+                                      textStyle: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ],
+                    ),
+
                     const SizedBox(height: 16),
                     
                     // Photo upload section
@@ -425,40 +454,22 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                           ),
                           
                           if (_photoPreviewUrls.isNotEmpty) 
-                            _buildPhotoPreview(),
-                            
-                          const SizedBox(height: 16),
+                            Column(
+                              children: [
+                                _buildPhotoPreview(),
+                              ],
+                            ),
                           
                           // Visibility Checkbox
-                          Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Checkbox(
-                                value: _isVisible,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _isVisible = value ?? true;
-                                  });
-                                },
-                                activeColor: Colors.black,
-                              ),
-                              Text(
-                                'Visible to Others',
-                                style: GoogleFonts.poppins(
-                                  textStyle: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                          
                         ],
                       ),
                     ),
                 
                     const SizedBox(height: 16),
                 
+                    SizedBox(height: 16,),
+
                     // Save button with loading indicator
                     SizedBox(
                       width: double.infinity,
@@ -504,7 +515,33 @@ class _AddLocationScreenState extends State<AddLocationScreen> {
                               borderRadius: BorderRadius.circular(5), // Reduced corner radius
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-                            backgroundColor: Color(0xfff3f3f3)
+                            backgroundColor: Color(0xff18E436)
+                          ),
+                      ),
+                    ),
+
+                    SizedBox(height: 16,),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: (){Navigator.pushNamed(context, '/home');},
+                        child: Text(
+                                'Cancel',
+                                style: GoogleFonts.poppins(
+                                  textStyle: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black
+                                  ),
+                                ),
+                              ),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5), // Reduced corner radius
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                            backgroundColor: Color(0xffFC2F2F)
                           ),
                       ),
                     ),
