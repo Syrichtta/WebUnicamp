@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:webunicamp/src/widgets/add_location_card.dart';
 import 'package:webunicamp/src/widgets/location_card.dart';
 import 'package:webunicamp/src/widgets/location_modal.dart';
 
@@ -139,66 +140,79 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                   );
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text("No locations found for this building"),
+                  return Row(
+                    children:[ GestureDetector(
+                  onTap: () { 
+                    Navigator.pushNamed(context, '/addlocation');
+                    },
+                  child: AddLocationCard(),
+                )]
                   );
                 }
 
                 final locations = snapshot.data!;
 
+                // Create a list of location cards and add the AddLocationCard at the end
+                final locationCards = locations.map((document) {
+                  final locationData = document.data() as Map<String, dynamic>;
+                  
+                  final locationName = locationData['Name'] ?? 'Unnamed Location';
+                  final locationPhotoURLs = locationData['PhotoURL'] as List<dynamic>?;
+                  final photoURL = (locationPhotoURLs != null && locationPhotoURLs.isNotEmpty)
+                      ? locationPhotoURLs[0]
+                      : 'https://via.placeholder.com/150';
+
+                  return GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) {
+                          return Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(16),
+                              ),
+                            ),
+                            child: LocationDetailsWidget(
+                              locationId: document.id,
+                              name: locationName,
+                              building: locationData['Building'] ?? 'Unknown',
+                              email: locationData['Email'] ?? 'No email',
+                              description: locationData['Description'] ?? 'No Description Available',
+                              photoURLs: locationPhotoURLs?.cast<String>() ?? [],
+                              Location: locationData['Location']
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: LocationCard(
+                      imgUrl: photoURL,
+                      title: locationName,
+                    ),
+                  );
+                }).toList();
+
+                // Add AddLocationCard at the end of the list
+                locationCards.add(GestureDetector(
+                  onTap: () { 
+                    Navigator.pushNamed(context, '/addlocation');
+                    },
+                  child: AddLocationCard(),
+                ));
+
                 return Wrap(
                   spacing: 12.0, // Horizontal spacing
                   runSpacing: 12.0, // Vertical spacing
-                  children: locations.map((document) {
-                    final locationData =
-                        document.data() as Map<String, dynamic>;
-
-                    final locationName =
-                        locationData['Name'] ?? 'Unnamed Location';
-                    final locationPhotoURLs =
-                        locationData['PhotoURL'] as List<dynamic>?;
-                    final photoURL = (locationPhotoURLs != null &&
-                            locationPhotoURLs.isNotEmpty)
-                        ? locationPhotoURLs[0]
-                        : 'https://via.placeholder.com/150';
-
-                    return GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (_) {
-                            return Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(16),
-                                ),
-                              ),
-                              child: LocationDetailsWidget(
-                                name: locationName,
-                                building: locationData['Building'] ?? 'Unknown',
-                                email: locationData['Email'] ?? 'No email',
-                                description: locationData['Description'] ??
-                                    'No Description Available',
-                                photoURLs:
-                                    locationPhotoURLs?.cast<String>() ?? [],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: LocationCard(
-                        imgUrl: photoURL,
-                        title: locationName,
-                      ),
-                    );
-                  }).toList(),
+                  children: locationCards,
                 );
               },
-            ),
+            )
+
           ],
         ),
       ),

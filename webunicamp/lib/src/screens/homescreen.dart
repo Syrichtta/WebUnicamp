@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
           // Overlay
           Positioned.fill(
             child: Container(
-              color: Colors.white.withOpacity(0.7),
+              color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.7),
             ),
           ),
           // Centered Firestore Buildings Query
