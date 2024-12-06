@@ -61,24 +61,27 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
           children: [
             // Image Carousel
             if (widget.photoURLs.isNotEmpty)
-              AspectRatio(
-                aspectRatio: 16 / 9,
+              SizedBox(
+                height: MediaQuery.of(context).size.height *
+                    0.4, // Fixed height for the slider
+                width: double.infinity,
                 child: CarouselSlider(
                   options: CarouselOptions(
-                    viewportFraction: 1.0,
+                    viewportFraction: 1.0, // Each slide takes the full width
                     enlargeCenterPage: false,
                     autoPlay: true,
                     autoPlayInterval: const Duration(seconds: 5),
                   ),
                   items: widget.photoURLs.map((url) {
                     return ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(
+                          8), // Optional for rounded edges
                       child: Image.network(
                         url,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Center(
-                          child: Icon(Icons.broken_image),
-                        ),
+                        fit: BoxFit
+                            .cover, // Ensures image fills width and crops height
+                        width: double
+                            .infinity, // Forces the image to stretch across full width
                       ),
                     );
                   }).toList(),
@@ -140,14 +143,14 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                   );
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Row(
-                    children:[ GestureDetector(
-                  onTap: () { 
-                    Navigator.pushNamed(context, '/addlocation');
-                    },
-                  child: AddLocationCard(),
-                )]
-                  );
+                  return Row(children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/addlocation');
+                      },
+                      child: AddLocationCard(),
+                    )
+                  ]);
                 }
 
                 final locations = snapshot.data!;
@@ -155,36 +158,50 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                 // Create a list of location cards and add the AddLocationCard at the end
                 final locationCards = locations.map((document) {
                   final locationData = document.data() as Map<String, dynamic>;
-                  
-                  final locationName = locationData['Name'] ?? 'Unnamed Location';
-                  final locationPhotoURLs = locationData['PhotoURL'] as List<dynamic>?;
-                  final photoURL = (locationPhotoURLs != null && locationPhotoURLs.isNotEmpty)
+
+                  final locationName =
+                      locationData['Name'] ?? 'Unnamed Location';
+                  final locationPhotoURLs =
+                      locationData['PhotoURL'] as List<dynamic>?;
+                  final photoURL = (locationPhotoURLs != null &&
+                          locationPhotoURLs.isNotEmpty)
                       ? locationPhotoURLs[0]
                       : 'https://via.placeholder.com/150';
 
                   return GestureDetector(
                     onTap: () {
-                      showModalBottomSheet(
+                      showDialog(
                         context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
                         builder: (_) {
-                          return Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(16),
-                              ),
+                          final screenHeight =
+                              MediaQuery.of(context).size.height;
+                          final screenWidth = MediaQuery.of(context).size.width;
+
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                            child: LocationDetailsWidget(
-                              locationId: document.id,
-                              name: locationName,
-                              building: locationData['Building'] ?? 'Unknown',
-                              email: locationData['Email'] ?? 'No email',
-                              description: locationData['Description'] ?? 'No Description Available',
-                              photoURLs: locationPhotoURLs?.cast<String>() ?? [],
-                              Location: locationData['Location']
+                            child: Container(
+                              height:
+                                  screenHeight * 0.85, // Set height as needed
+                              width: screenWidth * 0.75,
+                              padding: const EdgeInsets.all(16),
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(16),
+                                ),
+                              ),
+                              child: LocationDetailsWidget(
+                                locationId: document.id,
+                                name: locationName,
+                                building: locationData['Building'] ?? 'Unknown',
+                                email: locationData['Email'] ?? 'No email',
+                                description: locationData['Description'] ??
+                                    'No Description Available',
+                                photoURLs:
+                                    locationPhotoURLs?.cast<String>() ?? [],
+                                Location: locationData['Location'],
+                              ),
                             ),
                           );
                         },
@@ -199,9 +216,9 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
 
                 // Add AddLocationCard at the end of the list
                 locationCards.add(GestureDetector(
-                  onTap: () { 
+                  onTap: () {
                     Navigator.pushNamed(context, '/addlocation');
-                    },
+                  },
                   child: AddLocationCard(),
                 ));
 
@@ -212,7 +229,6 @@ class _BuildingDetailsWidgetState extends State<BuildingDetailsWidget> {
                 );
               },
             )
-
           ],
         ),
       ),

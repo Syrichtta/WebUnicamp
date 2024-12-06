@@ -82,30 +82,35 @@ class HomeScreen extends StatelessWidget {
 
                       return GestureDetector(
                         onTap: () {
-                          showModalBottomSheet(
+                          showDialog(
                             context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
                             builder: (BuildContext context) {
                               final screenHeight =
                                   MediaQuery.of(context).size.height;
+                              final screenWidth =
+                                  MediaQuery.of(context).size.width;
 
-                              return Container(
-                                height: screenHeight *
-                                    0.85, // Set to 3/4 of the screen height
-                                padding: const EdgeInsets.all(16),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(16),
-                                  ),
+                              return Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                child: BuildingDetailsWidget(
-                                  name: buildingData['Name'] ??
-                                      'Unnamed Building',
-                                  description: buildingData['Description'] ??
-                                      'No Description Available',
-                                  photoURLs: photoURLs,
+                                child: Container(
+                                  height: screenHeight *
+                                      0.85, // Set to 3/4 of the screen height
+                                  width: screenWidth * 0.75,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16),
+                                    ),
+                                  ),
+                                  child: BuildingDetailsWidget(
+                                    name: buildingData['Name'] ??
+                                        'Unnamed Building',
+                                    description: buildingData['Description'] ??
+                                        'No Description Available',
+                                    photoURLs: photoURLs,
+                                  ),
                                 ),
                               );
                             },
